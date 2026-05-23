@@ -1,0 +1,45 @@
+# Environment variables
+.env
+.env.*
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+venv/
+.venv/
+
+# Data directories (generated at runtime)
+data/raw/
+data/processed/
+data/memory/
+data/signals.json
+data/DECISIONS.md
+data/ERRORS.md
+
+# Agent runtime state
+/tmp/aegis-agent/
+
+# Dependencies
+node_modules/
+frontend/node_modules/
+
+# Logs
+*.log
+
+# Hardhat
+artifacts/
+cache/
+typechain/
+typechain-types/
+
+# OS
+.DS_Store
+Thumbs.db
+.vercel
+
+# Workspac# Synthesis Hackathon
+.synthesis_key
+.nanobot/
+TWEET_DRAFTS.txt
+*.webp

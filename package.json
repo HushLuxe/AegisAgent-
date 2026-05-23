@@ -1,0 +1,9 @@
+{
+  "name": "aegis-agent-contract",
+  "version": "1.0.0",
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^6.1.2",
+    "dotenv": "^17.3.1",
+    "hardhat": "^2.22.18"
+  }
+}
