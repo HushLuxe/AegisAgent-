@@ -1,0 +1,11 @@
+[project]
+name = "aegis-api"
+version = "0.1.0"
+requires-python = ">=3.10,<3.13"
+dependencies = [
+  "requests",
+  "web3",
+  "python-dotenv",
+  "upstash-redis",
+  "cryptography"
+]
