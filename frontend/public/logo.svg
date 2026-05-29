@@ -1,0 +1,15 @@
+<svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Outer Shield / Aegis -->
+  <path d="M100 20 L160 45 C160 45 175 120 100 180 C25 120 40 45 40 45 L100 20 Z" fill="#00E5FF22" stroke="#00E5FF" stroke-width="4" stroke-linejoin="round" />
+  
+  <!-- Inner Forensic Eye -->
+  <circle cx="100" cy="85" r="35" stroke="#00E5FF" stroke-width="2" stroke-dasharray="4 4" />
+  <circle cx="100" cy="85" r="20" fill="#00E5FF" />
+  
+  <!-- Optical Scan Lines -->
+  <path d="M70 85 H130" stroke="#00E5FF" stroke-width="1" stroke-opacity="0.5" />
+  <path d="M100 55 V115" stroke="#00E5FF" stroke-width="1" stroke-opacity="0.5" />
+  
+  <!-- Digital Core Reflections -->
+  <circle cx="95" cy="80" r="5" fill="white" fill-opacity="0.4" />
+</svg>

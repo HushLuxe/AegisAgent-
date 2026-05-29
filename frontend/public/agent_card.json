@@ -1,0 +1,14 @@
+{
+  "name": "AegisAgent",
+  "description": "Autonomous Celo Forensic Sentinel. High-fidelity intelligence for the Celo L2 ecosystem.",
+  "image": "https://aegisagento.vercel.app/logo.svg",
+  "external_url": "https://aegisagento.vercel.app",
+  "agentWalletAddress": "0xE32A943635107CA464a2c1328EFf34AE0bFa8247",
+  "capabilities": ["forensics", "risk-assessment", "autonomous-monetization"],
+  "endpoints": [
+    {
+      "type": "HTTP",
+      "url": "https://aegis-agent.vercel.app/api/v1"
+    }
+  ]
+}
