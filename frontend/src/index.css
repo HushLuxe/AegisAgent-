@@ -306,3 +306,47 @@ header {
 ::-webkit-scrollbar-track { background: var(--bg); }
 ::-webkit-scrollbar-thumb { background: var(--border-bright); }
 ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+/* ── Loading Skeleton ── */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.skel {
+  background: linear-gradient(90deg, var(--surface) 25%, var(--surface-raised) 50%, var(--surface) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 4px;
+}
+.skel-line { border-radius: 2px; }
+.skel-card { height: 48px; border-radius: 6px; }
+
+/* ── Responsive ── */
+@media (max-width: 1024px) {
+  .main-grid {
+    grid-template-columns: 220px 1fr !important;
+  }
+  .telemetry { display: none !important; }
+}
+
+@media (max-width: 768px) {
+  .main-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .sidebar {
+    position: fixed;
+    left: -260px;
+    top: 60px;
+    bottom: 0;
+    width: 260px;
+    z-index: 900;
+    transition: left 0.3s ease;
+    border-right: 1px solid var(--border);
+    background: var(--bg);
+  }
+  .sidebar.open { left: 0; }
+  .content-area { grid-column: 1 !important; }
+  .mobile-menu-btn { display: flex !important; }
+  header { padding: 0 12px; }
+  .hero-title { font-size: 36px !important; }
+}

@@ -47,10 +47,13 @@ const Dashboard = () => {
   const [aiEnabled, setAiEnabled] = useState(false);
   const [aiProvider, setAiProvider] = useState('venice');
   const [sosoData, setSosoData] = useState(null);
+  const [loadingState, setLoadingState] = useState('loading'); // 'loading' | 'loaded' | 'error'
 
   // Fetch forensics from Vercel API on mount and every 2 minutes
   useEffect(() => {
     const load = () => {
+      setLoadingState('loading');
+
       // Try loading SoSoValue data from memory.json as supplement
       fetch('/memory.json?t=' + Date.now())
         .then(res => res.json())
@@ -58,19 +61,18 @@ const Dashboard = () => {
           if (mem.sosovalue) setSosoData(mem.sosovalue);
         })
         .catch(() => {});
-      
+
       fetch('/api/forensics?t=' + Date.now())
         .then(async r => {
           if (!r.ok) {
             const errBody = await r.text();
-            console.error(`❌ API Error (${r.status}):`, errBody);
+            console.error(`API Error (${r.status}):`, errBody);
             throw new Error(`API Error ${r.status}`);
           }
           return r.json();
         })
         .then(data => {
-          console.log("✅ Aegis API Response:", data);
-          // The API returns { tokens: { addr: report }, api_source: "live/cache" }
+          console.log("Aegis API Response:", data);
           const list = Object.values(data.tokens || {});
           setTokens(list);
           if (data.api_source) {
@@ -80,6 +82,7 @@ const Dashboard = () => {
           setAiProvider(data.ai_provider || 'venice');
           setUpdatedAt(data.timestamp ? new Date(data.timestamp).toLocaleTimeString() : '');
           if (!selected && list.length) setSelected(list[0]);
+          setLoadingState('loaded');
         })
         .catch(() => {
           console.warn('Aegis API not yet online. Fallback to cached state.');
@@ -91,12 +94,15 @@ const Dashboard = () => {
                 setTokens(fallbackData.tokens);
                 setUpdatedAt(fallbackData.updated_at ? new Date(fallbackData.updated_at).toLocaleTimeString() : '');
                 if (!selected && fallbackData.tokens.length) setSelected(fallbackData.tokens[0]);
+                setLoadingState('loaded');
+              } else {
+                setLoadingState('error');
               }
               if (fallbackData.sosovalue) {
                 setSosoData(fallbackData.sosovalue);
               }
             })
-            .catch(e => console.error('Fallback failed', e));
+            .catch(() => setLoadingState('error'));
         });
     };
     load();
@@ -372,7 +378,48 @@ const Dashboard = () => {
 
       {/* ── Main Content ── */}
       <main className={`content-area ${!isUnlocked ? 'locked' : ''}`} style={{ position: 'relative' }}>
-        {!isUnlocked && (
+        {/* Loading skeleton */}
+        {loadingState === 'loading' && !isUnlocked && (
+          <div className="paywall-overlay">
+            <div className="paywall-card">
+              <div className="pw-chip">Loading forensic data...</div>
+              <div className="skel skel-line" style={{ width: '60%', height: '16px', margin: '16px auto' }}></div>
+              <div className="skel skel-line" style={{ width: '80%', height: '12px', margin: '8px auto' }}></div>
+              <div className="skel skel-line" style={{ width: '40%', height: '12px', margin: '8px auto' }}></div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '8px', marginTop: '20px' }}>
+                {[1,2,3].map(i => <div key={i} className="skel skel-card"></div>)}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Error state */}
+        {loadingState === 'error' && tokens.length === 0 && (
+          <div className="paywall-overlay">
+            <div className="paywall-card">
+              <div className="pw-chip" style={{ color: '#ff4466' }}>Connection Failed</div>
+              <div style={{ fontSize: '24px', marginBottom: '12px' }}>⚠️</div>
+              <h2>Unable to Load Data</h2>
+              <p style={{ color: 'var(--text-dim)', fontSize: '12px', lineHeight: 1.6 }}>
+                The forensic engine is not responding. This may be because:
+              </p>
+              <ul style={{ color: 'var(--text-ghost)', fontSize: '11px', textAlign: 'left', margin: '12px 0', paddingLeft: '20px', lineHeight: 2 }}>
+                <li>No API keys are configured in the environment</li>
+                <li>The backend pipeline has not completed a cycle yet</li>
+                <li>The Vercel deployment is cold-starting</li>
+              </ul>
+              <button
+                className="btn-unlock-pw"
+                onClick={() => window.location.reload()}
+                style={{ marginTop: '12px' }}
+              >
+                Retry Connection
+              </button>
+            </div>
+          </div>
+        )}
+
+        {!isUnlocked && loadingState !== 'loading' && loadingState !== 'error' && (
           <div className="paywall-overlay">
             <div className="paywall-card">
               <div className="pw-chip">Per-Token Forensic Intelligence · SoSoValue + SoDEX</div>
