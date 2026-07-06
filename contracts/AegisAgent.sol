@@ -54,7 +54,8 @@ contract AegisAgent {
         
         // Refund surplus
         if (msg.value > subscriptionFee) {
-            payable(msg.sender).transfer(msg.value - subscriptionFee);
+            (bool refundOk, ) = payable(msg.sender).call{value: msg.value - subscriptionFee}("");
+            require(refundOk, "Refund transfer failed");
         }
     }
 
@@ -87,7 +88,10 @@ contract AegisAgent {
      * @dev Withdraw collected fees to the owner.
      */
     function withdraw() external onlyOwner {
-        payable(owner).transfer(address(this).balance);
+        uint256 balance = address(this).balance;
+        require(balance > 0, "No balance to withdraw");
+        (bool ok, ) = payable(owner).call{value: balance}("");
+        require(ok, "Withdraw transfer failed");
     }
 
     /**
