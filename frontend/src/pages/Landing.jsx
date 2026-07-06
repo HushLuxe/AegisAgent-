@@ -1,7 +1,22 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 const Landing = () => {
+  const [liveStats, setLiveStats] = useState({ tokens: '16', avgSai: '—', status: 'ONLINE' });
+
+  useEffect(() => {
+    fetch('/api/status?t=' + Date.now())
+      .then(r => r.json())
+      .then(data => {
+        setLiveStats({
+          tokens: String(data.tokens_monitored || 16),
+          avgSai: data.avg_sai ? data.avg_sai.toFixed(1) : '—',
+          status: data.status === 'operational' ? 'ONLINE' : 'DEGRADED',
+        });
+      })
+      .catch(() => {});
+  }, []);
+
   return (
     <>
       <header>
@@ -13,9 +28,9 @@ const Landing = () => {
           </div>
         </div>
         <div className="status-ticker mono">
-          <div className="status-item"><span>●</span> SYSTEM: ONLINE</div>
+          <div className="status-item"><span>●</span> SYSTEM: {liveStats.status}</div>
           <div className="status-item"><span>●</span> ANALYSIS: REAL-TIME</div>
-          <div className="status-item"><span>●</span> SOSOVALUE: 16 ASSETS</div>
+          <div className="status-item"><span>●</span> SOSOVALUE: {liveStats.tokens} ASSETS</div>
         </div>
       </header>
 
@@ -47,17 +62,16 @@ const Landing = () => {
               <span className="t-label">aegis-agent · forensic_engine_v5.1</span>
             </div>
             <div className="t-line"><span className="cmd">$</span> <span className="out">aegis run</span> <span className="val">forensic_engine_v5.1</span></div>
-                <div className="t-line"><span className="out">→ Loading watchlist... 16 assets · SoSoValue API</span></div>
+                <div className="t-line"><span className="out">→ Loading watchlist... {liveStats.tokens} assets · SoSoValue API</span></div>
                 <div className="t-line"><span className="out">→ Fetching market data [SoSoValue / DexScreener]</span></div>
                 <div className="t-line"><span className="out">→ Computing metrics: SAI / TFA / LFI / LCR / BPI</span></div>
-                <div className="t-line"><span className="warn">⚠️ CONVERGENCE DETECTED — LFI=0.88 → FRAGILITY_ZONE</span></div>
-                <div className="t-line"><span className="out">→ Forensic LLM synthesis... EN report generated</span></div>
+                <div className="t-line"><span className="out">→ Forensic LLM synthesis... report generated</span></div>
                 <div className="t-line"><span className="out">→ Pushing memory.json to Sovereign KV</span></div>
-            <div className="t-line"><span className="out">→ Telegram:</span> <span className="val">3 alerts dispatched ✓</span></div>
+            <div className="t-line"><span className="out">→ Status:</span> <span className="val">{liveStats.status} ✓</span></div>
             <div className="t-line"><span className="cmd">$</span> <span className="cursor"></span></div>
           </div>
           <div className="stats-strip">
-            <div className="stat-cell"><div className="stat-val">16</div><div className="stat-key">Assets</div></div>
+            <div className="stat-cell"><div className="stat-val">{liveStats.tokens}</div><div className="stat-key">Assets</div></div>
               <div className="stat-cell">
                 <div className="stat-val">100+</div>
                 <div className="stat-key">Metrics</div>
