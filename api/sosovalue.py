@@ -1,6 +1,7 @@
 import os
 import json
 import sys
+import time
 from datetime import datetime, timezone
 from http.server import BaseHTTPRequestHandler
 from urllib.parse import urlparse, parse_qs
@@ -21,8 +22,30 @@ except ImportError:
 
 import config.settings as settings
 
+# Simple in-memory TTL cache (persists across warm serverless invocations)
+_cache = {}
+_CACHE_TTL = 300  # 5 minutes
+
+
+def _get_cached(key):
+    entry = _cache.get(key)
+    if entry and time.time() - entry["ts"] < _CACHE_TTL:
+        return entry["data"]
+    return None
+
+
+def _set_cache(key, data):
+    _cache[key] = {"data": data, "ts": time.time()}
+
 
 class handler(BaseHTTPRequestHandler):
+    def do_OPTIONS(self):
+        self.send_response(200)
+        self.send_header('Access-Control-Allow-Origin', '*')
+        self.send_header('Access-Control-Allow-Methods', 'GET, OPTIONS')
+        self.send_header('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type')
+        self.end_headers()
+
     def do_GET(self):
         url_bits = urlparse(self.path)
         params = parse_qs(url_bits.query)
@@ -30,6 +53,18 @@ class handler(BaseHTTPRequestHandler):
         try:
             client = SoSoValueClient()
             module = params.get("module", ["all"])[0]
+            force_refresh = params.get("refresh", ["false"])[0].lower() == "true"
+            cache_key = f"sosovalue_{module}"
+
+            if not force_refresh:
+                cached = _get_cached(cache_key)
+                if cached:
+                    self.send_response(200)
+                    self.send_header('Content-Type', 'application/json')
+                    self.send_header('Access-Control-Allow-Origin', '*')
+                    self.end_headers()
+                    self.wfile.write(json.dumps(cached, default=str).encode('utf-8'))
+                    return
 
             result = {"timestamp": datetime.now(timezone.utc).isoformat(), "source": "sosovalue"}
 
@@ -63,6 +98,8 @@ class handler(BaseHTTPRequestHandler):
                     "price": _sf(i.get("data", i).get("price", 0)),
                     "change_24h": _sf(i.get("data", i).get("priceChange24h", 0)),
                 } for i in indices]
+
+            _set_cache(cache_key, result)
 
             self.send_response(200)
             self.send_header('Content-Type', 'application/json')
