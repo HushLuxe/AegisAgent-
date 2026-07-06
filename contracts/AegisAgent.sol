@@ -98,6 +98,8 @@ contract AegisAgent {
      * @dev Set a new subscription fee.
      */
     function setSubscriptionFee(uint256 _newFee) external onlyOwner {
+        require(_newFee <= 1 ether, "Fee exceeds maximum (1 CELO)");
+        require(_newFee > 0, "Fee must be positive");
         subscriptionFee = _newFee;
     }
 }
