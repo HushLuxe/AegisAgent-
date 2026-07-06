@@ -1,4 +1,5 @@
 import json
+import logging
 import os
 import sys
 from datetime import datetime, timezone
@@ -6,6 +7,9 @@ from datetime import datetime, timezone
 from forensic_engine_v5 import ForensicEngineV5
 
 import requests
+
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - [%(levelname)s] - %(message)s')
+logger = logging.getLogger(__name__)
 
 def publish_forensic_digest(results):
     """Publie un tableau synthèse des 17 tokens sur Moltbook"""
@@ -31,16 +35,26 @@ def publish_forensic_digest(results):
     content += header + "\n".join(rows)
     content += "\n\nFull autonomous intelligence cycle complete. Monitoring for Celo network anomalies.\n#Celo #AegisAgent #Forensics"
 
+    if not MOLTBOOK_API_KEY:
+        logger.warning("MOLTBOOK_API_KEY not set, skipping digest publish")
+        return
+
     try:
         payload = {
             "submolt_name": "trading",
             "title": f"AEGIS REPORT: {len(results['tokens'])} Asset Scans",
             "content": content
         }
-        requests.post(MOLTBOOK_URL, headers={"Authorization": f"Bearer {MOLTBOOK_API_KEY}", "Content-Type": "application/json"}, json=payload, timeout=10)
-        print("📣 Digest Forensique publié sur Moltbook.")
-    except:
-        print("⚠️ Échec publication Digest.")
+        resp = requests.post(
+            MOLTBOOK_URL,
+            headers={"Authorization": f"Bearer {MOLTBOOK_API_KEY}", "Content-Type": "application/json"},
+            json=payload,
+            timeout=10
+        )
+        resp.raise_for_status()
+        logger.info("Digest published to Moltbook")
+    except requests.exceptions.RequestException as e:
+        logger.error("Failed to publish digest to Moltbook: %s", e)
 
 def main():
     base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
