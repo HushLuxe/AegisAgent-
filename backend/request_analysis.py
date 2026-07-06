@@ -29,10 +29,22 @@ AGENT_WALLET = os.environ.get("AGENT_WALLET", "0xE32A943635107CA464a2c1328EFf34A
 SYNTHESIS_OUTPUT = "/tmp/aegis-agent/synthesis.json"
 POSITION_FILE = "/tmp/aegis-agent/mind/position.json"
 
+FALLBACK_PROMPT = """You are AegisAgent, an autonomous forensic intelligence agent on Celo L2.
+Analyze the provided forensic report JSON and produce a structured synthesis with:
+- cycle_summary: 1-2 sentence overview
+- critical_alerts: list of tokens requiring immediate attention
+- token_briefs: per-token risk level and narrative (2-3 sentences each)
+- agent_confidence: HIGH/MEDIUM/LOW based on data completeness
+Focus on: holder concentration (WCC), liquidity stress (LFI), and price action signals."""
+
 def load_prompt():
     ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    with open(os.path.join(ROOT_DIR, "PROMPT_ANALYSIS.md")) as f:
-        return f.read()
+    prompt_path = os.path.join(ROOT_DIR, "PROMPT_ANALYSIS.md")
+    try:
+        with open(prompt_path) as f:
+            return f.read()
+    except FileNotFoundError:
+        return FALLBACK_PROMPT
 
 def load_forensic_reports():
     ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
