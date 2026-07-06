@@ -8,7 +8,7 @@
   "endpoints": [
     {
       "type": "HTTP",
-      "url": "https://aegis-agent.vercel.app/api/v1"
+      "url": "https://aegisagento.vercel.app/api/forensics"
     }
   ]
 }

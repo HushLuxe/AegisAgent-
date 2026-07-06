@@ -2,7 +2,7 @@ const hre = require("hardhat");
 
 async function main() {
   const IDENTITY_REGISTRY_ADDRESS = "0x8004A818BFB912233c491871b3d84c89A494BD9e";
-  const AGENT_CARD_URI = "https://aegis-agent.vercel.app/agent_card.json"; // Placeholder until hosted
+  const AGENT_CARD_URI = "https://aegisagento.vercel.app/agent_card.json";
 
   console.log("🚀 Registering AegisAgent on ERC-8004 Identity Registry...");
 
