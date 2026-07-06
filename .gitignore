@@ -43,6 +43,7 @@ Thumbs.db
 
 # Workspac# Synthesis Hackathon
 .synthesis_key
+.synthesis_meta.json
 .nanobot/
 TWEET_DRAFTS.txt
 *.webp
