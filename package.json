@@ -1,6 +1,10 @@
 {
   "name": "aegis-agent-contract",
   "version": "1.0.0",
+  "scripts": {
+    "build:check": "cd frontend && npm run build",
+    "lint:check": "cd frontend && npm run lint"
+  },
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^6.1.2",
     "dotenv": "^17.3.1",
