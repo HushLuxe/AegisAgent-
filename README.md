@@ -164,13 +164,20 @@ cd frontend && npm install && cd ..
 
 # 4. Configure environment
 cp .env.example .env
-# Edit .env with your API keys
+# Edit .env with your API keys (see Environment Variables below)
 
 # 5. Run the full agent pipeline
 python3 backend/agent.py
 
-# 6. Launch the frontend
+# 6. Launch the frontend (separate terminal)
 cd frontend && npm run dev
+```
+
+### Health Check
+
+```bash
+curl http://localhost:3000/api/status
+# Returns: { "status": "operational", "tokens_monitored": 16, ... }
 ```
 
 ### Environment Variables
@@ -215,28 +222,36 @@ cd frontend && npm run dev
 ```
 AegisAgent/
 ├── backend/
-│   ├── agent.py                  # Pipeline orchestrator (6-step cycle)
+│   ├── agent.py                  # Pipeline orchestrator (7-step cycle + cleanup)
 │   ├── sosovalue_client.py       # SoSoValue API client (all 9 modules)
 │   ├── sosovalue_collector.py    # SoSoValue data collection step
 │   ├── collector.py              # Celo on-chain data collector
 │   ├── forensic_engine_v5.py     # 100+ metric computation engine
 │   ├── report_builder.py         # Forensic report generation
 │   ├── request_analysis.py       # AI synthesis + on-chain sealing
-│   ├── signal_tracker.py         # Signal tracking
+│   ├── signal_tracker.py         # Signal delta tracking
 │   ├── export_memory_json.py     # Dashboard data export (incl. SoSoValue)
 │   └── telegram_alerts.py        # Autonomous alert delivery
 ├── api/
-│   ├── forensics.py              # /api/forensics endpoint
-│   ├── sosovalue.py              # /api/sosovalue endpoint
-│   ├── uniswap.py                # /api/uniswap endpoint
-│   └── status_network.py         # /api/status_network endpoint
+│   ├── forensics.py              # /api/forensics — full forensic pipeline
+│   ├── sosovalue.py              # /api/sosovalue — SoSoValue intelligence (cached)
+│   ├── status.py                 # /api/status — health check endpoint
+│   ├── uniswap.py                # /api/uniswap — autonomous swap routing
+│   └── status_network.py         # /api/status_network — gasless beacon emission
 ├── frontend/
 │   └── src/
-│       └── pages/Dashboard.jsx   # Dashboard with SoSoValue Intel Panel
+│       ├── pages/Dashboard.jsx   # Dashboard with SoSoValue Intel Panel
+│       ├── pages/Landing.jsx     # Dynamic landing page with live stats
+│       └── pages/NotFound.jsx    # 404 error page
 ├── config/
-│   └── settings.py               # Configuration (SoSoValue + SoDEX + Celo)
-├── contracts/                    # x402 subscription smart contract
-└── scripts/                      # Deployment + utility scripts
+│   ├── settings.py               # Configuration (SoSoValue + SoDEX + Celo)
+│   └── tokens.json               # Tracked Celo token addresses
+├── contracts/
+│   └── AegisAgent.sol            # x402 subscription smart contract (Celo)
+├── scripts/                      # Deployment + utility scripts
+├── PROMPT_ANALYSIS.md            # Forensic analysis LLM prompt template
+├── requirements.txt              # Python dependencies
+└── .env.example                  # Environment variable template
 ```
 
 ---
