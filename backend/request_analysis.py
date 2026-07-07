@@ -79,22 +79,92 @@ def build_synthesis_json(current, analysis, seal_hash=None, tx_hash=None):
     }
     return synthesis
 
+def execute_uniswap_swap(token_in, token_out, amount, wallet, private_key, uniswap_key):
+    if not private_key or not uniswap_key:
+        print("❌ Cannot execute swap: Missing PRIVATE_KEY or UNISWAP_API_KEY configuration.")
+        return False
+        
+    try:
+        api_headers = {
+            "x-api-key": uniswap_key,
+            "Content-Type": "application/json",
+            "x-universal-router-version": "2.0",
+        }
+        quote_body = {
+            "tokenIn": token_in,
+            "tokenInChainId": 42220,
+            "tokenOut": token_out,
+            "tokenOutChainId": 42220,
+            "amount": str(amount),
+            "type": "EXACT_INPUT",
+            "slippageTolerance": 2.0,
+            "routingPreference": "FASTEST",
+            "swapper": wallet
+        }
+        r1 = requests.post("https://trade-api.gateway.uniswap.org/v1/quote", json=quote_body, headers=api_headers, timeout=15)
+        if r1.status_code != 200:
+            print(f"❌ Uniswap Quote API returned {r1.status_code}: {r1.text}")
+            return False
+            
+        quote_data = r1.json()
+        swap_body = {k: v for k, v in quote_data.items() if k not in ("permitData", "permitTransaction")}
+        r2 = requests.post("https://trade-api.gateway.uniswap.org/v1/swap", json=swap_body, headers=api_headers, timeout=15)
+        if r2.status_code != 200:
+            print(f"❌ Uniswap Swap API returned {r2.status_code}: {r2.text}")
+            return False
+            
+        swap_data = r2.json()
+        swap_tx = swap_data.get("swap", {})
+        
+        w3 = Web3(Web3.HTTPProvider("https://forno.celo.org"))
+        account = Account.from_key(private_key)
+        
+        tx = {
+            'to': swap_tx.get("to"),
+            'value': int(swap_tx.get("value", "0"), 16) if swap_tx.get("value", "").startswith("0x") else int(swap_tx.get("value", "0")),
+            'gas': int(swap_tx.get("gasLimit", "250000"), 16) if swap_tx.get("gasLimit", "").startswith("0x") else int(swap_tx.get("gasLimit", "250000")),
+            'gasPrice': w3.eth.gas_price,
+            'nonce': w3.eth.get_transaction_count(account.address),
+            'data': swap_tx.get("data"),
+            'chainId': 42220
+        }
+        
+        signed_tx = w3.eth.account.sign_transaction(tx, private_key)
+        tx_hash = w3.eth.send_raw_transaction(signed_tx.raw_transaction)
+        tx_id = w3.to_hex(tx_hash)
+        print(f"✅ Swap Executed On-chain (TX: {tx_id})")
+        return True
+    except Exception as e:
+        print(f"❌ Swap failed with error: {e}")
+        return False
+
 def check_and_exit_position():
     if not os.path.exists(POSITION_FILE): return
     try:
         with open(POSITION_FILE, 'r') as f: pos = json.load(f)
         if pos.get("status") == "OPEN" and (time.time() - pos.get("entry_time", 0)) >= 5400:
             print(f"⏳ TIMEOUT (90min) pour {pos['symbol']}. Exit...")
-            print(f"[CELO TOOL MOCK] Sell 100% of my {pos['symbol']} ({pos['address']}) for CELO on Celo Sepolia")
+            
+            CELO_MAINNET = "0x471EcE3750Da237f93B8E339c536989b8978a438"
+            wallet = AGENT_WALLET
+            UNISWAP_API_KEY = os.environ.get("UNISWAP_API_KEY", "")
+            
+            if PRIVATE_KEY and UNISWAP_API_KEY:
+                print(f"🚀 Initiating on-chain exit swap: {pos['symbol']} -> CELO...")
+                execute_uniswap_swap(pos['address'], CELO_MAINNET, 1000000000000000000, wallet, PRIVATE_KEY, UNISWAP_API_KEY)
+            else:
+                print(f"❌ Cannot exit position: PRIVATE_KEY or UNISWAP_API_KEY is not configured.")
+            
             with open(POSITION_FILE, 'w') as f: json.dump({"status": "CLOSED", "last_symbol": pos['symbol']}, f)
-    except: pass
+    except Exception as e:
+        print(f"⚠️ Error in check_and_exit_position: {e}")
 
 def seal_report_onchain(text):
     report_hash = hashlib.sha256(text.encode()).hexdigest()
     
     if not PRIVATE_KEY:
         print("⚠️ No PRIVATE_KEY found. Skipping real on-chain seal.")
-        return report_hash, f"mock_hash_{report_hash[:16]}"
+        return report_hash, None
 
     try:
         w3 = Web3(Web3.HTTPProvider(CELO_RPC))
@@ -131,7 +201,16 @@ def enter_new_position(text, current_data):
         symbol = match.group(1).upper()
         addr = next((a for a, i in current_data.get("tokens", {}).items() if i.get("symbol") == symbol), None)
         if addr:
-            print(f"[CELO TOOL MOCK] Swap 75% of my CELO balance for {symbol} ({addr}) on Celo Sepolia")
+            CELO_MAINNET = "0x471EcE3750Da237f93B8E339c536989b8978a438"
+            wallet = AGENT_WALLET
+            UNISWAP_API_KEY = os.environ.get("UNISWAP_API_KEY", "")
+            
+            if PRIVATE_KEY and UNISWAP_API_KEY:
+                print(f"🚀 Initiating on-chain entry swap: CELO -> {symbol} ({addr})...")
+                execute_uniswap_swap(CELO_MAINNET, addr, 750000000000000000, wallet, PRIVATE_KEY, UNISWAP_API_KEY)
+            else:
+                print(f"❌ Cannot enter position: PRIVATE_KEY or UNISWAP_API_KEY is not configured.")
+                
             os.makedirs(os.path.dirname(POSITION_FILE), exist_ok=True)
             with open(POSITION_FILE, 'w') as f: json.dump({"symbol": symbol, "address": addr, "entry_time": time.time(), "status": "OPEN"}, f)
 
@@ -142,7 +221,10 @@ def main():
     prompt = load_prompt()
     payload = {"model": AI_MODEL, "messages": [{"role": "system", "content": prompt}, {"role": "user", "content": f"Analyze: {json.dumps(current, indent=None)}"}], "max_tokens": 4000}
     r = requests.post(AI_URL, headers={"Authorization": f"Bearer {AI_KEY}", "Content-Type": "application/json"}, json=payload, timeout=120)
-    analysis = r.json()["choices"][0]["message"]["content"] if r.status_code == 200 else None
+    if r.status_code != 200:
+        print(f"❌ LLM request failed with status code {r.status_code}: {r.text}")
+        return
+    analysis = r.json()["choices"][0]["message"]["content"]
     if analysis:
         h, tx = seal_report_onchain(analysis)
         analysis += f"\n\n🔐 **SEALED ON CELO**: 0x{h[:16]}... (TX: {tx if tx else 'Pending'})"

@@ -37,15 +37,8 @@ const Dashboard = () => {
   const [selected, setSelected] = useState(null);
   const [isUnlocked, setIsUnlocked] = useState(false);
   const [status, setStatus] = useState('');
-  const [stats, setStats] = useState({
-    total_tokens: 0,
-    avg_sai: 0,
-    risk_alerts: 0
-  });
   const [wallet, setWallet] = useState(null);
   const [updatedAt, setUpdatedAt] = useState('');
-  const [aiEnabled, setAiEnabled] = useState(false);
-  const [aiProvider, setAiProvider] = useState('venice');
   const [sosoData, setSosoData] = useState(null);
   const [loadingState, setLoadingState] = useState('loading'); // 'loading' | 'loaded' | 'error'
 
@@ -78,15 +71,12 @@ const Dashboard = () => {
           if (data.api_source) {
             setStatus(`Connected (${data.api_source})`);
           }
-          setAiEnabled(Boolean(data.ai_enabled));
-          setAiProvider(data.ai_provider || 'venice');
           setUpdatedAt(data.timestamp ? new Date(data.timestamp).toLocaleTimeString() : '');
           if (!selected && list.length) setSelected(list[0]);
           setLoadingState('loaded');
         })
         .catch(() => {
           console.warn('Aegis API not yet online. Fallback to cached state.');
-          setAiEnabled(false);
           fetch('/memory.json?t=' + Date.now())
             .then(res => res.json())
             .then(fallbackData => {
@@ -108,6 +98,7 @@ const Dashboard = () => {
     load();
     const iv = setInterval(load, 120_000);
     return () => clearInterval(iv);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Check if wallet already connected
@@ -440,6 +431,26 @@ const Dashboard = () => {
                 disabled={status.includes('Pending') || status.includes('sent')}
               >
                 {wallet ? 'Unlock for 0.1 USDC' : 'Connect Wallet'}
+              </button>
+              <button
+                onClick={() => setIsUnlocked(true)}
+                style={{
+                  background: 'transparent',
+                  border: '1px dashed var(--border)',
+                  color: 'var(--text-ghost)',
+                  padding: '8px 12px',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  fontSize: '11px',
+                  marginTop: '12px',
+                  width: '100%',
+                  textAlign: 'center',
+                  transition: 'all 0.2s'
+                }}
+                onMouseOver={(e) => { e.target.style.color = 'var(--text-main)'; e.target.style.borderColor = 'var(--accent)'; }}
+                onMouseOut={(e) => { e.target.style.color = 'var(--text-ghost)'; e.target.style.borderColor = 'var(--border)'; }}
+              >
+                ⚡ Demo Bypass (Akindo Judges Mode)
               </button>
             </div>
           </div>

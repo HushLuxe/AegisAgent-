@@ -150,9 +150,9 @@ def build_tracker_prompt(current_snap, deltas, memories, prev_signals, decisions
         if abs(d.get("volume_delta_pct", 0)) > 20: changes.append(f"Vol {d['volume_delta_pct']:+.0f}%")
         if abs(d.get("sai_delta", 0)) >= 0.5: changes.append(f"SAI {d['sai_delta']:+.1f}")
         if abs(d.get("tfa_delta", 0)) > 10: changes.append(f"TFA {d['tfa_delta']:+.0f}")
-        if d.get("phase_changed"): changes.append(f"Phase: {d['prev_phase']} \u2192 {current_snap[symbol]['phase']}")
-        if d.get("bull_flag_new"): changes.append("\ud83d\udea9 NEW BULL FLAG")
-        if d.get("bull_flag_lost"): changes.append("\u274c BULL FLAG LOST")
+        if d.get("phase_changed"): changes.append(f"Phase: {d['prev_phase']} -> {current_snap[symbol]['phase']}")
+        if d.get("bull_flag_new"): changes.append("🚩 NEW BULL FLAG")
+        if d.get("bull_flag_lost"): changes.append("❌ BULL FLAG LOST")
         if changes: delta_lines.append(f"- **{symbol}**: {', '.join(changes)}")
     deltas_text = "\n".join(delta_lines) if delta_lines else "No significant changes this cycle."
     prev_sig_text = ""
@@ -224,32 +224,32 @@ def save_signals(signals, report_text):
     output = {"updated_at": datetime.now(timezone.utc).isoformat(), "cycle": datetime.now(timezone.utc).strftime("%Y%m%d_%H%M"), "signals": signals, "evolution_report": report_text}
     os.makedirs(os.path.dirname(SIGNALS_FILE), exist_ok=True)
     with open(SIGNALS_FILE, "w") as f: json.dump(output, f, indent=2, ensure_ascii=False)
-    print(f"\u2705 signals.json written \u2192 {SIGNALS_FILE}")
+    print(f"✅ signals.json written -> {SIGNALS_FILE}")
 
 def main():
-    print("\ud83d\udd04 Signal Evolution Tracker \u2014 loading data...")
+    print("🔄 Signal Evolution Tracker — loading data...")
     current, previous = load_reports()
-    if not current: print("\u274c No report found"); return
+    if not current: print("❌ No report found"); return
     current_snap = extract_market_data(current)
     previous_snap = extract_market_data(previous) if previous else {}
-    print(f"\ud83d\udcca Current: {len(current_snap)} tokens | Previous: {len(previous_snap)} tokens")
+    print(f"📊 Current: {len(current_snap)} tokens | Previous: {len(previous_snap)} tokens")
     deltas = compute_deltas(current_snap, previous_snap) if previous_snap else {}
     memories = load_top_memories(current_snap, top_n=5)
-    print(f"\ud83e\udde0 Loaded {len(memories)} memory files")
+    print(f"🧠 Loaded {len(memories)} memory files")
     prev_signals = load_previous_signals()
-    print(f"\ud83d\udce1 Previous signals: {len(prev_signals.get('signals', []))}")
+    print(f"📡 Previous signals: {len(prev_signals.get('signals', []))}")
     decisions = load_decisions()
     prompt = build_tracker_prompt(current_snap, deltas, memories, prev_signals, decisions)
     data_payload = {"current_metrics": {s: {k: v for k, v in d.items() if k in ['sai','phase','tfa','bpi','lfi','dai','bull_flag_detected']} for s, d in current_snap.items()}, "deltas": deltas}
     print(f"🤖 Calling {'Venice' if VENICE_API_KEY else 'Groq'} AI (Signal Tracker)...")
     response = call_llm(prompt, data_payload)
     if response:
-        print("\u2705 Signal Evolution Report generated")
+        print("✅ Signal Evolution Report generated")
         signals = extract_signals_json(response)
-        print(f"\ud83d\udce1 {len(signals)} active signals extracted")
+        print(f"📡 {len(signals)} active signals extracted")
         save_signals(signals, response)
     else:
-        print("\u274c Signal tracker failed")
+        print("❌ Signal tracker failed")
         save_signals([], "Signal tracker failed this cycle.")
 
 if __name__ == "__main__": main()

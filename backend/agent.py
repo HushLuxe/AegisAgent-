@@ -26,10 +26,13 @@ class AegisAgent:
 
         logging.info("Executing: %s...", script_name)
         try:
+            env = os.environ.copy()
+            env["PYTHONIOENCODING"] = "utf-8"
             result = subprocess.run(
                 [self.python_bin, script_path],
                 capture_output=True,
-                text=True,
+                encoding="utf-8",
+                env=env,
                 timeout=300
             )
             if result.returncode != 0:
