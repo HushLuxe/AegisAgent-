@@ -8,7 +8,7 @@ AegisAgent is an agentic finance application that combines SoSoValue's on-chain 
 
 - **Runs every 60 minutes** via Vercel Cron
 - **Ingests live data** from SoSoValue API across 7 modules (market, news, macro, ETF, treasuries, indices, sectors)
-- **Collects on-chain data** for Celo L2 tokens via DexScreener + Moralis
+- **Collects on-chain data** via DexScreener + Moralis
 - **Computes 100+ proprietary metrics** through `ForensicEngineV5` (whale clustering, liquidity fragility, volatility divergence, etc.)
 - **Generates structured forensic narratives** via Venice.ai (LLaMA 3.3 70B) — sovereign, private
 - **Emits autonomous alerts** via Telegram for high-priority signals
@@ -28,7 +28,7 @@ AegisAgent is an agentic finance application that combines SoSoValue's on-chain 
 ### Pipeline Steps
 
 1. **SoSoValue Collection** — Ingests market snapshots, news sentiment, ETF flows, macro events, BTC treasuries, and index data
-2. **On-Chain Collection** — Fetches Celo L2 token data (liquidity, holders, OHLCV)
+2. **On-Chain Collection** — Fetches token data (liquidity, holders, OHLCV)
 3. **Forensic Analysis** — Computes 100+ metrics (SAI, LFI, TFA, WCC, BPI, etc.)
 4. **AI Synthesis** — Generates structured risk narratives incorporating SoSoValue intelligence
 5. **Signal Tracking** — Compares current vs previous cycle for delta detection
@@ -41,7 +41,7 @@ AegisAgent is an agentic finance application that combines SoSoValue's on-chain 
 |-------|-----------|
 | Runtime | Python 3.11 / Vercel Serverless |
 | Data Source | SoSoValue API (7 modules) |
-| On-chain Data | DexScreener + Moralis (Celo L2) |
+| On-chain Data | DexScreener + Moralis |
 | LLM | LLaMA 3.3 70B via Venice.ai |
 | Storage | Vercel KV (Redis) |
 | Frontend | React + Tailwind (Vercel) |

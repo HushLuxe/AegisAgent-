@@ -640,7 +640,7 @@ class ForensicEngineV5:
             ai_narrative = self._call_ai(report, provider_key, ai_provider)
             report.narrative_phase = conv.phase
             report.narrative_insight = ai_narrative
-            report.narrative_structure = f"Forensic Analysis for {report.symbol} on Celo Mainnet"
+            report.narrative_structure = f"Forensic Analysis for {report.symbol}"
         else:
             report.narrative_phase = self._build_phase_narrative(report)
             report.narrative_insight = self._build_insight(report, price, mcap, liquidity)

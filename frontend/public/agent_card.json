@@ -1,6 +1,6 @@
 {
   "name": "AegisAgent",
-  "description": "Autonomous forensic intelligence agent powered by SoSoValue API on Celo L2",
+  "description": "Autonomous forensic intelligence agent powered by SoSoValue API",
   "image": "https://aegisagento.vercel.app/logo.svg",
   "external_url": "https://aegisagento.vercel.app",
   "capabilities": ["forensics", "risk-assessment", "sosovalue-integration"],

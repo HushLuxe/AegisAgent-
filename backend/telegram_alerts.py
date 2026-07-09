@@ -58,7 +58,7 @@ def check_for_alerts():
 
         # 2. Risk Alert (High Volatility/Risk)
         elif sai <= 2.5 and sai > 0:
-            msg = f"⚠️ *AegisAgent RISK WARNING*\n\n📉 *${symbol}* is showing high fragility cluster!\n📉 SAI Score: {sai}/10\n📊 Status: HIGH RISK\n\n[Analyze on Celo L2](https://aegisagento.vercel.app/dashboard)"
+            msg = f"⚠️ *AegisAgent RISK WARNING*\n\n📉 *${symbol}* is showing high fragility cluster!\n📉 SAI Score: {sai}/10\n📊 Status: HIGH RISK\n\n[Analyze on Dashboard](https://aegisagento.vercel.app/dashboard)"
             alerts_triggered.append(msg)
 
     if alerts_triggered:

@@ -15,7 +15,7 @@ TELEGRAM_CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID", "")
 
 SYNTHESIS_OUTPUT = "/tmp/aegis-agent/synthesis.json"
 
-FALLBACK_PROMPT = """You are AegisAgent, an autonomous forensic intelligence agent on Celo L2.
+FALLBACK_PROMPT = """You are AegisAgent, an autonomous forensic intelligence agent.
 Analyze the provided forensic report JSON and produce a structured synthesis with:
 - cycle_summary: 1-2 sentence overview
 - critical_alerts: list of tokens requiring immediate attention

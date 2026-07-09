@@ -15,7 +15,7 @@ class AegisAgent:
     def __init__(self):
         self.workspace = os.path.dirname(os.path.abspath(__file__))
         self.python_bin = "python3"
-        logging.info("AegisAgent initialized — SoSoValue + Celo L2 pipeline.")
+        logging.info("AegisAgent initialized — SoSoValue pipeline.")
 
     def run_step(self, script_name):
         script_path = os.path.join(self.workspace, script_name)
@@ -78,7 +78,7 @@ class AegisAgent:
         if not self.run_step("sosovalue_collector.py"):
             failed_steps.append("sosovalue_collector")
 
-        # 2. Collect on-chain data for Celo ecosystem tokens
+        # 2. Collect on-chain data
         if not self.run_step("collector.py"):
             failed_steps.append("collector")
 

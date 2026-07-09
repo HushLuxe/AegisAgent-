@@ -4,7 +4,6 @@
 
 [![Live Demo](https://img.shields.io/badge/Live-aegisagento.vercel.app-00E5FF?style=for-the-badge)](https://aegisagento.vercel.app)
 [![SoSoValue](https://img.shields.io/badge/Data-SoSoValue%20API-FCFF52?style=for-the-badge)](https://sosovalue.com)
-[![Celo L2](https://img.shields.io/badge/Network-Celo%20L2-FCFF52?style=for-the-badge)](https://explorer.celo.org)
 [![Sovereign AI](https://img.shields.io/badge/AI-Venice.ai-FF3D00?style=for-the-badge)](https://venice.ai)
 
 ## Overview
@@ -27,7 +26,7 @@ Crypto traders and investors lack a unified intelligence layer that combines on-
 AegisAgent is a fully autonomous AI agent that runs a **7-step intelligence pipeline** every cycle:
 
 1. **SoSoValue Data Collection** — Ingests market snapshots, news feeds, ETF flows, macro events, BTC treasuries, and index data via SoSoValue API (7 modules)
-2. **On-Chain Forensics** — Collects Celo L2 token data via DexScreener + Moralis for holder analysis
+2. **On-Chain Forensics** — Collects token data via DexScreener + Moralis for holder analysis
 3. **Forensic Engine V5** — Computes 100+ proprietary metrics (SAI, LFI, TFA, WCC, BPI, RSI, Bull Flags, Fibonacci)
 4. **AI Synthesis** — Venice.ai (Llama 3.3 70B) generates structured risk narratives incorporating SoSoValue intelligence
 5. **Signal Tracking** — Compares current vs previous cycle for delta detection
@@ -130,7 +129,7 @@ AegisAgent/
 │   ├── agent.py                  # Pipeline orchestrator (7-step cycle)
 │   ├── sosovalue_client.py       # SoSoValue API client (all 9 modules)
 │   ├── sosovalue_collector.py    # SoSoValue data collection step
-│   ├── collector.py              # Celo on-chain data collector
+│   ├── collector.py              # On-chain data collector
 │   ├── forensic_engine_v5.py     # 100+ metric computation engine
 │   ├── report_builder.py         # Forensic report generation
 │   ├── request_analysis.py       # AI synthesis
@@ -146,8 +145,8 @@ AegisAgent/
 │       ├── pages/Dashboard.jsx   # Dashboard with SoSoValue Intel Panel
 │       └── pages/Landing.jsx     # Landing page
 ├── config/
-│   ├── settings.py               # Configuration (SoSoValue + Celo)
-│   └── tokens.json               # Tracked Celo token addresses
+│   ├── settings.py               # Configuration (SoSoValue API)
+│   └── tokens.json               # Tracked token addresses
 ├── PROMPT_ANALYSIS.md            # Forensic analysis LLM prompt
 ├── requirements.txt              # Python dependencies
 └── .env.example                  # Environment variable template
