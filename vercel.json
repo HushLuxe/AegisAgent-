@@ -1,6 +1,5 @@
 {
   "version": 2,
-  "rootDirectory": ".",
   "routes": [
     {
       "src": "/api/(.*)",
@@ -20,7 +19,7 @@
       "schedule": "0 0 * * *"
     }
   ],
-  "installCommand": "cd frontend && npm install",
-  "buildCommand": "cd frontend && npm run build",
+  "installCommand": "npm install --prefix frontend",
+  "buildCommand": "npm run build --prefix frontend",
   "outputDirectory": "frontend/dist"
 }
