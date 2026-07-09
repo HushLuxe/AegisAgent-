@@ -2,7 +2,7 @@
 
 > **Autonomous Forensic Intelligence Agent — Powered by SoSoValue API**
 
-[![Live Demo](https://img.shields.io/badge/Live-aegisagento.vercel.app-00E5FF?style=for-the-badge)](https://aegisagent-sosovalue.vercel.app)
+[![Live Demo](https://img.shields.io/badge/Live-aegisagent-sosovalue.vercel.app-00E5FF?style=for-the-badge)](https://aegisagent-sosovalue.vercel.app)
 [![SoSoValue](https://img.shields.io/badge/Data-SoSoValue%20API-FCFF52?style=for-the-badge)](https://sosovalue.com)
 [![Sovereign AI](https://img.shields.io/badge/AI-Venice.ai-FF3D00?style=for-the-badge)](https://venice.ai)
 
@@ -14,7 +14,7 @@ Built for the **SoSoValue Buildathon** — demonstrating how a single-person tea
 
 ## Essential Links
 
-- **Live Dashboard**: [aegisagento.vercel.app](https://aegisagento.vercel.app)
+- **Live Dashboard**: [aegisagent-sosovalue.vercel.app](https://aegisagent-sosovalue.vercel.app)
 - **GitHub**: [HushLuxe/AegisAgent](https://github.com/HushLuxe/AegisAgent)
 
 ## Problem

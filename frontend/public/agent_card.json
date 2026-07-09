@@ -1,13 +1,13 @@
 {
   "name": "AegisAgent",
   "description": "Autonomous forensic intelligence agent powered by SoSoValue API",
-  "image": "https://aegisagento.vercel.app/logo.svg",
-  "external_url": "https://aegisagento.vercel.app",
+  "image": "https://aegisagent-sosovalue.vercel.app/logo.svg",
+  "external_url": "https://aegisagent-sosovalue.vercel.app",
   "capabilities": ["forensics", "risk-assessment", "sosovalue-integration"],
   "endpoints": [
     {
       "type": "HTTP",
-      "url": "https://aegisagento.vercel.app/api/forensics"
+      "url": "https://aegisagent-sosovalue.vercel.app/api/forensics"
     }
   ]
 }

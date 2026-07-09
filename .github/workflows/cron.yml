@@ -16,7 +16,7 @@ jobs:
           # Use VERCEL_APP_URL secret if defined, otherwise fallback to default URL
           URL="${{ secrets.VERCEL_APP_URL }}"
           if [ -z "$URL" ]; then
-            URL="https://aegisagento.vercel.app"
+            URL="https://aegisagent-sosovalue.vercel.app"
           fi
           
           echo "Triggering hourly forensic scan on AegisAgent..."

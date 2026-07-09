@@ -50,7 +50,7 @@ AegisAgent is an agentic finance application that combines SoSoValue's on-chain 
 
 ## Live Deployment
 
-- **Dashboard:** [https://aegisagento.vercel.app](https://aegisagento.vercel.app)
+- **Dashboard:** [https://aegisagent-sosovalue.vercel.app](https://aegisagent-sosovalue.vercel.app)
 - **GitHub:** [https://github.com/hushluxe/aegisagent](https://github.com/hushluxe/aegisagent)
 
 ## SoSoValue Buildathon

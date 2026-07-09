@@ -53,12 +53,12 @@ def check_for_alerts():
         
         # 1. Breakout Alert (Aegis RUPTURE)
         if sai >= 9.0:
-            msg = f"🛡️ *AegisAgent RUPTURE DETECTED*\n\n🔥 *${symbol}* is showing extreme breakout momentum!\n📈 SAI Score: {sai}/10\n📊 Phase: {phase}\n\n[View Dashboard](https://aegisagento.vercel.app/dashboard)"
+            msg = f"🛡️ *AegisAgent RUPTURE DETECTED*\n\n🔥 *${symbol}* is showing extreme breakout momentum!\n📈 SAI Score: {sai}/10\n📊 Phase: {phase}\n\n[View Dashboard](https://aegisagent-sosovalue.vercel.app/dashboard)"
             alerts_triggered.append(msg)
 
         # 2. Risk Alert (High Volatility/Risk)
         elif sai <= 2.5 and sai > 0:
-            msg = f"⚠️ *AegisAgent RISK WARNING*\n\n📉 *${symbol}* is showing high fragility cluster!\n📉 SAI Score: {sai}/10\n📊 Status: HIGH RISK\n\n[Analyze on Dashboard](https://aegisagento.vercel.app/dashboard)"
+            msg = f"⚠️ *AegisAgent RISK WARNING*\n\n📉 *${symbol}* is showing high fragility cluster!\n📉 SAI Score: {sai}/10\n📊 Status: HIGH RISK\n\n[Analyze on Dashboard](https://aegisagent-sosovalue.vercel.app/dashboard)"
             alerts_triggered.append(msg)
 
     if alerts_triggered:

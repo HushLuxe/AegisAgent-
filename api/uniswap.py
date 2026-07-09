@@ -56,7 +56,7 @@ class handler(BaseHTTPRequestHandler):
             "x-api-key": api_key,
             "Content-Type": "application/json",
             "x-universal-router-version": "2.0",
-            "Origin": "https://aegisagento.vercel.app"
+            "Origin": "https://aegisagent-sosovalue.vercel.app"
         }
 
         try:

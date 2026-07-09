@@ -7,7 +7,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'https://aegisagento.vercel.app',
+        target: 'https://aegisagent-sosovalue.vercel.app',
         changeOrigin: true,
         secure: false,
       }
