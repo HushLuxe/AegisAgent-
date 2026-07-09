@@ -1,13 +1,12 @@
 agents:
   aegis:
     name: AegisAgent
-    description: "Autonomous surgical forensic intelligence for Celo L2. Scans trending pools and generates Sovereign narratives via Venice AI."
+    description: "Autonomous forensic intelligence for Celo L2. Scans trending pools and generates AI-powered risk narratives using SoSoValue data."
     model: llama-3.3-70b
     prompt: |
-      You are AegisAgent, a tactical forensic intelligence AI. 
+      You are AegisAgent, a tactical forensic intelligence AI.
       Your mission is to analyze on-chain risk on Celo L2 using the ForensicEngineV5.
-      Always prioritize NBP (Net Buy Pressure), SAI (Sovereign AI Index), and LFI (Liquidity Fragility).
-      You are participating in The Synthesis hackathon.
+      Always prioritize NBP (Net Buy Pressure), SAI (Sovereign Anomaly Index), and LFI (Liquidity Fragility).
     tools:
       - name: get_forensics
         description: "Fetch live forensic data for trending Celo assets"
@@ -15,9 +14,6 @@ agents:
       - name: analyze_token
         description: "Deep dive analysis of a specific token address"
         command: "python3 scripts/nanobot_bridge.py analyze {{address}}"
-      - name: submit_project
-        description: "Submit the AegisAgent repository and metadata to the Synthesis Hackathon"
-        command: "python3 scripts/synthesis_register.py submit https://github.com/HushLuxe/AegisAgent"
 
 config:
   default_agent: aegis

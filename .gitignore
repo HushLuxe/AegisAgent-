@@ -16,9 +16,8 @@ venv/
 data/raw/
 data/processed/
 data/memory/
+data/cache/
 data/signals.json
-data/DECISIONS.md
-data/ERRORS.md
 
 # Agent runtime state
 /tmp/aegis-agent/
@@ -30,20 +29,10 @@ frontend/node_modules/
 # Logs
 *.log
 
-# Hardhat
-artifacts/
-cache/
-typechain/
-typechain-types/
-
 # OS
 .DS_Store
 Thumbs.db
 .vercel
 
-# Workspac# Synthesis Hackathon
-.synthesis_key
-.synthesis_meta.json
-.nanobot/
-TWEET_DRAFTS.txt
-*.webp
+# Runtime database
+*.db

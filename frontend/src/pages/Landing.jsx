@@ -36,7 +36,7 @@ const Landing = () => {
 
       <div className="hero">
         <div className="hero-left">
-          <div className="eyebrow">Autonomous Forensic Intelligence · SoSoValue + SoDEX</div>
+          <div className="eyebrow">Autonomous Forensic Intelligence · Powered by SoSoValue API</div>
           <h1 className="hero-title">
             <span className="accent">AEGIS</span><br />
             <span className="dim">FORENSIC</span><br />
@@ -77,7 +77,7 @@ const Landing = () => {
                 <div className="stat-key">Metrics</div>
               </div>
             <div className="stat-cell"><div className="stat-val">1H</div><div className="stat-key">Cycle</div></div>
-            <div className="stat-cell"><div className="stat-val">x402</div><div className="stat-key">Paywall</div></div>
+            <div className="stat-cell"><div className="stat-val">7</div><div className="stat-key">SoSoValue Modules</div></div>
           </div>
         </div>
       </div>
@@ -113,7 +113,7 @@ const Landing = () => {
 
       <div style={{ padding: '80px 64px', borderTop: '1px solid var(--border)', background: 'var(--surface)' }}>
         <div style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--accent)', marginBottom: '48px', display: 'flex', alignItems: 'center', gap: '12px' }}>
-          // x402 Micropayments · SoDEX
+          // Autonomous Intelligence Pipeline
           <span style={{ flex: 1, height: '1px', background: 'var(--border)' }}></span>
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1px', background: 'var(--border)', border: '1px solid var(--border)' }}>
@@ -123,34 +123,26 @@ const Landing = () => {
               TOKEN<br/>DASHBOARD
             </h2>
             <p style={{ fontSize: '14px', color: 'var(--text-dim)', lineHeight: 1.7, marginBottom: '28px' }}>
-              Surface-level SAI scores are always public. Full forensic depth — 100+ computed metrics, LFI simulation, whale mapping, bull flag detection, and a Sovereign-powered AI narrative — unlocked with a single on-chain micropayment via SoDEX.
+              Full forensic depth — 100+ computed metrics, LFI simulation, whale mapping, bull flag detection, and an AI-powered risk narrative. All data sourced from SoSoValue API and on-chain feeds.
             </p>
-            <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px', marginBottom: '28px' }}>
-              <span className="paywall-price" style={{ fontSize: '52px' }}>0.1</span>
-              <span style={{ fontSize: '12px', color: 'var(--text-dim)', fontFamily: "'JetBrains Mono', monospace" }}>USDC / 24H ACCESS</span>
-            </div>
             <Link to="/dashboard" className="btn-primary" style={{ padding: '14px 32px' }}>Open Intelligence Feed →</Link>
           </div>
           <div style={{ background: 'var(--bg)', padding: '40px', borderLeft: '1px solid var(--border)' }}>
-            <div className="pw-chip" style={{ borderColor: 'rgba(255,140,0,0.3)', background: 'rgba(255,140,0,0.06)', color: 'var(--amber)' }}>Autonomous Synthesis Engine</div>
+            <div className="pw-chip" style={{ borderColor: 'rgba(255,140,0,0.3)', background: 'rgba(255,140,0,0.06)', color: 'var(--amber)' }}>AI-Powered Intelligence</div>
             <h2 style={{ fontSize: 'clamp(28px, 3.5vw, 48px)', fontWeight: 800, lineHeight: 0.9, letterSpacing: '-0.04em', textTransform: 'uppercase', marginBottom: '20px' }}>
               GLOBAL<br/>SYNTHESIS
             </h2>
             <p style={{ fontSize: '14px', color: 'var(--text-dim)', lineHeight: 1.7, marginBottom: '28px' }}>
-              Every 60 minutes, AegisAgent autonomously ingests live data from SoSoValue API — market snapshots, news, ETF flows, macro events, BTC treasuries — and invokes Venice AI to generate a structured forensic narrative — phase classification, structural risk, and signal confidence — with no human input.
+              Every 60 minutes, AegisAgent autonomously ingests live data from SoSoValue API — market snapshots, news, ETF flows, macro events, BTC treasuries — and invokes Venice AI to generate a structured forensic narrative with no human input.
             </p>
-            <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px', marginBottom: '28px' }}>
-              <span className="paywall-price" style={{ fontSize: '52px', color: 'var(--amber)' }}>0.1</span>
-              <span className="mono" style={{ color: 'var(--text-ghost)', fontSize: '14px' }}>USDC / 24H</span>
-            </div>
           </div>
         </div>
       </div>
 
       <footer style={{ padding: '24px 64px', borderTop: '1px solid var(--border)', background: 'var(--surface)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '10px', color: 'var(--text-ghost)', fontFamily: "'JetBrains Mono', monospace" }}>
-        <div>AegisAgent · <span style={{ color: 'var(--accent)' }}>SOVEREIGN FORENSIC INTELLIGENCE</span> · SoSoValue + SoDEX</div>
-        <div>ForensicEngineV5 · Venice AI · x402 Protocol</div>
-        <div>© 2026 · <span style={{ color: 'var(--accent)' }}>AUTONOMOUS · NON-CUSTODIAL</span></div>
+        <div>AegisAgent · <span style={{ color: 'var(--accent)' }}>SOVEREIGN FORENSIC INTELLIGENCE</span> · Powered by SoSoValue</div>
+        <div>ForensicEngineV5 · Venice AI</div>
+        <div>© 2026 · <span style={{ color: 'var(--accent)' }}>AUTONOMOUS</span></div>
       </footer>
     </>
   );

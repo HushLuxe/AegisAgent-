@@ -1,13 +1,10 @@
 {
-  "name": "aegis-agent-contract",
+  "name": "aegis-agent",
   "version": "1.0.0",
+  "description": "Autonomous forensic intelligence agent powered by SoSoValue API",
   "scripts": {
     "build:check": "cd frontend && npm run build",
-    "lint:check": "cd frontend && npm run lint"
-  },
-  "devDependencies": {
-    "@nomicfoundation/hardhat-toolbox": "^6.1.2",
-    "dotenv": "^17.3.1",
-    "hardhat": "^2.22.18"
+    "lint:check": "cd frontend && npm run lint",
+    "dev": "cd frontend && npm run dev"
   }
 }

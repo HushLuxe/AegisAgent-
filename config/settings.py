@@ -3,27 +3,16 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # ── API Keys (set via environment variables) ────────────────────────────────
-DEXSCREENER_API   = "https://api.dexscreener.com/latest/dex/tokens/"
+DEXSCREENER_API = "https://api.dexscreener.com/latest/dex/tokens/"
 GROQ_API_KEY = os.environ.get("GROQ_API_KEY")
 VENICE_API_KEY = os.environ.get("VENICE_API_KEY")
-# Discord Webhook pour OpenClaw Agent
-MORALIS_API_KEY   = os.environ.get("MORALIS_API_KEY", "")
+MORALIS_API_KEY = os.environ.get("MORALIS_API_KEY", "")
 TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "")
-TELEGRAM_CHAT_ID  = os.environ.get("TELEGRAM_CHAT_ID", "")
-MOLTBOOK_API_KEY  = os.environ.get("MOLTBOOK_API_KEY", "")
+TELEGRAM_CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID", "")
 
 # ── SoSoValue API ───────────────────────────────────────────────────────────
-SOSO_API_KEY      = os.environ.get("SOSO_API_KEY", "")
-SOSO_BASE_URL     = os.environ.get("SOSO_BASE_URL", "https://openapi.sosovalue.com/openapi/v1")
-
-# ── SoDEX API ───────────────────────────────────────────────────────────────
-SODEX_REST_SPOT   = os.environ.get("SODEX_REST_SPOT", "https://testnet-gw.sodex.dev/api/v1/spot")
-SODEX_REST_PERPS  = os.environ.get("SODEX_REST_PERPS", "https://testnet-gw.sodex.dev/api/v1/perps")
-SODEX_WS_SPOT     = os.environ.get("SODEX_WS_SPOT", "wss://testnet-gw.sodex.dev/ws/spot")
-SODEX_WS_PERPS    = os.environ.get("SODEX_WS_PERPS", "wss://testnet-gw.sodex.dev/ws/perps")
-SODEX_API_KEY_NAME = os.environ.get("SODEX_API_KEY_NAME", "")
-SODEX_API_KEY_PRIV = os.environ.get("SODEX_API_KEY_PRIV", "")
-SODEX_CHAIN_ID     = int(os.environ.get("SODEX_CHAIN_ID", "138565"))  # 138565=testnet, 286623=mainnet
+SOSO_API_KEY = os.environ.get("SOSO_API_KEY", "")
+SOSO_BASE_URL = os.environ.get("SOSO_BASE_URL", "https://openapi.sosovalue.com/openapi/v1")
 
 # ── SoSoValue Tracked Assets ───────────────────────────────────────────────
 SOSO_TRACKED_CURRENCIES = [
@@ -47,15 +36,15 @@ SOSO_TRACKED_CURRENCIES = [
 SOSO_TRACKED_INDICES = ["ssiLayer1", "ssiAI", "ssiDeFi"]
 
 # ── Rate-limit delays (seconds) ─────────────────────────────────────────────
-DEXSCREENER_DELAY  = 1.0
+DEXSCREENER_DELAY = 1.0
 GECKOTERMINAL_DELAY = 1.5
-MORALIS_DELAY      = 1.0
-SOSO_DELAY         = 2.0
+MORALIS_DELAY = 1.0
+SOSO_DELAY = 2.0
 
 # ── Network ──────────────────────────────────────────────────────────────────
 CHAIN = "celo"
 CHAIN_ID = 42220  # Celo Mainnet
 
 # ── Paywall ──────────────────────────────────────────────────────────────────
-CUSD_ADDRESS  = "0x765DE816845861e75A25fCA122bb6898B8B1282a"  # cUSD Mainnet
+CUSD_ADDRESS = "0x765DE816845861e75A25fCA122bb6898B8B1282a"  # cUSD Mainnet
 RECEIVER_ADDR = "0x71fd4359eB2da83C1BCd34f93a1C206d68b1eFba"

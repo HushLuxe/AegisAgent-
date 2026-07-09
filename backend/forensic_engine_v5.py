@@ -629,7 +629,6 @@ class ForensicEngineV5:
         # ────────────────────────────────────────────
         # NARRATIVES (AI Integration - Venice / Groq)
         # ────────────────────────────────────────────
-        # FORCE Venice branding for Synthesis / Private Agents track
         ai_provider = "venice"
         venice_key = os.environ.get("VENICE_API_KEY", "").strip()
         groq_key = os.environ.get("GROQ_API_KEY", "").strip()

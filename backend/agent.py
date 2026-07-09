@@ -17,8 +17,7 @@ class AegisAgent:
         self.python_bin = "python3"
         logging.info("AegisAgent initialized — SoSoValue + Celo L2 pipeline.")
 
-    def run_step(self, script_name, critical=False):
-        """Run a pipeline step. If critical=True, log as error but don't stop cycle."""
+    def run_step(self, script_name):
         script_path = os.path.join(self.workspace, script_name)
         if not os.path.exists(script_path):
             logging.warning("Script %s not found. Skipping.", script_name)
@@ -48,7 +47,6 @@ class AegisAgent:
             return False
 
     def cleanup_old_data(self, days=7):
-        """Remove data snapshots older than N days to prevent disk exhaustion."""
         base_dir = os.path.dirname(self.workspace)
         raw_dir = os.path.join(base_dir, "data", "raw")
         processed_dir = os.path.join(base_dir, "data", "processed")
@@ -61,7 +59,6 @@ class AegisAgent:
             for filepath in glob.glob(os.path.join(directory, "forensic_*.json")) + glob.glob(os.path.join(directory, "snapshot_*.json")):
                 try:
                     filename = os.path.basename(filepath)
-                    # Extract timestamp from filename
                     ts_str = filename.replace("forensic_", "").replace("snapshot_", "").replace(".json", "")
                     file_time = datetime.strptime(ts_str, "%Y%m%d_%H%M%S")
                     if file_time < cutoff:
@@ -96,7 +93,7 @@ class AegisAgent:
         if not self.run_step("request_analysis.py"):
             failed_steps.append("request_analysis")
 
-        # 6. Send autonomous alerts for high-priority signals (Rupture/Risk)
+        # 6. Send autonomous alerts for high-priority signals
         self.run_step("telegram_alerts.py")
 
         # 7. Export memory state for the frontend Dashboard

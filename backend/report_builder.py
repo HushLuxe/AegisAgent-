@@ -6,55 +6,8 @@ from datetime import datetime, timezone
 
 from forensic_engine_v5 import ForensicEngineV5
 
-import requests
-
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - [%(levelname)s] - %(message)s')
 logger = logging.getLogger(__name__)
-
-def publish_forensic_digest(results):
-    """Publie un tableau synthèse des 17 tokens sur Moltbook"""
-    MOLTBOOK_API_KEY = os.environ.get("MOLTBOOK_API_KEY", "")
-    MOLTBOOK_URL = "https://www.moltbook.com/api/v1/posts"
-    
-    # Construction du tableau synthétique
-    header = "| Token | SAI | Phase | BPI | TFA |\n|---|---|---|---|---|\n"
-    rows = []
-    
-    # Trier par SAI décroissant
-    sorted_tokens = sorted(results["tokens"].values(), key=lambda x: x["convergence"]["sai"], reverse=True)
-    
-    for t in sorted_tokens[:10]: # Top 10 pour la lisibilité
-        symbol = t["symbol"]
-        sai = t["convergence"]["sai"]
-        phase = t["convergence"]["phase"]
-        bpi = round(t["bull_flag"]["bpi"], 2)
-        tfa = round(t["flows"]["tfa"], 1)
-        rows.append(f"| {symbol} | {sai} | {phase} | {bpi} | {tfa}% |")
-    
-    content = f"🛡️ **AegisAgent Forensic Assessment — {datetime.now(timezone.utc).strftime('%H:%M UTC')}**\n\n"
-    content += header + "\n".join(rows)
-    content += "\n\nFull autonomous intelligence cycle complete. Monitoring for Celo network anomalies.\n#Celo #AegisAgent #Forensics"
-
-    if not MOLTBOOK_API_KEY:
-        logger.warning("MOLTBOOK_API_KEY not set, skipping digest publish")
-        return
-
-    try:
-        payload = {
-            "submolt_name": "trading",
-            "title": f"AEGIS REPORT: {len(results['tokens'])} Asset Scans",
-            "content": content
-        }
-        resp = requests.post(
-            MOLTBOOK_URL,
-            headers={"Authorization": f"Bearer {MOLTBOOK_API_KEY}", "Content-Type": "application/json"},
-            json=payload,
-            timeout=10
-        )
-        resp.raise_for_status()
-        logger.info("Digest published to Moltbook")
-    except requests.exceptions.RequestException as e:
-        logger.error("Failed to publish digest to Moltbook: %s", e)
 
 def main():
     base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))

@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
 
-const SODEX_CHAIN_ID = 138565; // SoDEX testnet
-const AEGIS_CONTRACT_ADDRESS = '0x74B24d2cd92046772674bFf9B85c11cFd2b9C3d2';
+const AEGIS_CONTRACT_ADDRESS = '0x0000000000000000000000000000000000000000';
 
 // ── helpers ───────────────────────────────────────────────────────────────────
 const fmt = (n, digits = 2) => (typeof n === 'number' ? n.toFixed(digits) : '—');
@@ -101,52 +100,10 @@ const Dashboard = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Check if wallet already connected
+  // Auto-unlock for SoSoValue Buildathon demo
   useEffect(() => {
-    if (window.ethereum) {
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
-      provider.listAccounts().then(accs => { 
-        if (accs.length) {
-          setWallet(accs[0]);
-          checkSubscription(accs[0], provider);
-        }
-      });
-
-      window.ethereum.on('accountsChanged', (accs) => {
-        if (accs.length) {
-          setWallet(accs[0]);
-          checkSubscription(accs[0], new ethers.providers.Web3Provider(window.ethereum));
-        } else {
-          setWallet(null);
-          setIsUnlocked(false);
-        }
-      });
-    }
+    setIsUnlocked(true);
   }, []);
-
-  const checkSubscription = async (addr, provider) => {
-    if (AEGIS_CONTRACT_ADDRESS === '0x0000000000000000000000000000000000000000') return;
-    
-    // Check local cache first for "one-time" feel
-    const cached = localStorage.getItem(`aegis_unlocked_${addr.toLowerCase()}`);
-    if (cached === 'true') {
-      setIsUnlocked(true);
-      return;
-    }
-
-    try {
-      const aegis = new ethers.Contract(
-        AEGIS_CONTRACT_ADDRESS,
-        ['function hasActiveSubscription(address user) view returns (bool)'],
-        provider
-      );
-      const active = await aegis.hasActiveSubscription(addr);
-      setIsUnlocked(active);
-      if (active) {
-        localStorage.setItem(`aegis_unlocked_${addr.toLowerCase()}`, 'true');
-      }
-    } catch (e) { console.error('Error checking sub:', e); }
-  };
 
   const [isLoading, setIsLoading] = useState(false);
   const [bailoutStatus, setBailoutStatus] = useState('');
@@ -214,59 +171,9 @@ const Dashboard = () => {
     }
   };
 
-  const ensureSoDEXNetwork = async () => {
-    if (!window.ethereum) return false;
-    try {
-      await window.ethereum.request({
-        method: 'wallet_switchEthereumChain',
-        params: [{ chainId: '0x' + SODEX_CHAIN_ID.toString(16) }],
-      });
-      return true;
-    } catch (e) {
-      if (e.code === 4902) {
-        try {
-          await window.ethereum.request({
-            method: 'wallet_addEthereumChain',
-            params: [{
-              chainId: '0x' + SODEX_CHAIN_ID.toString(16),
-              chainName: 'SoDEX Testnet',
-              nativeCurrency: { name: 'USDC', symbol: 'USDC', decimals: 6 },
-              rpcUrls: ['https://testnet-gw.sodex.dev'],
-              blockExplorerUrls: ['https://testnet.sodex.dev'],
-            }],
-          });
-          return true;
-        } catch { return false; }
-      }
-      return false;
-    }
-  };
-
-  const handleUnlock = async () => {
-    if (!wallet) { connectWallet(); return; }
-    if (!await ensureSoDEXNetwork()) { setStatus('Please switch to SoDEX Testnet.'); return; }
-    
-    setStatus('Pending confirmation in wallet…');
-    try {
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
-      const signer = provider.getSigner();
-      
-      const aegis = new ethers.Contract(
-        AEGIS_CONTRACT_ADDRESS,
-        ['function subscribe() payable', 'function subscriptionFee() view returns (uint256)'],
-        signer
-      );
-
-      const fee = await aegis.subscriptionFee();
-      const tx = await aegis.subscribe({ value: fee });
-      
-      setStatus('Transaction sent… awaiting confirmation.');
-      await tx.wait();
-      setStatus('✓ Subscription confirmed!');
-      setIsUnlocked(true);
-    } catch (err) {
-      setStatus(err.code === 4001 ? 'Transaction cancelled.' : 'Payment failed. Ensure you have USDC on SoDEX.');
-    }
+  // Dashboard is always accessible for SoSoValue Buildathon
+  const handleUnlock = () => {
+    setIsUnlocked(true);
   };
 
   const t = selected;
@@ -319,32 +226,21 @@ const Dashboard = () => {
       <aside className="sidebar">
         <div className="sidebar-label">
           <span>Forensic Assets</span>
-          <span className="mono" style={{ color: 'var(--accent)' }}>{isUnlocked ? tokens.length : '??'}</span>
+          <span className="mono" style={{ color: 'var(--accent)' }}>{tokens.length}</span>
         </div>
-        {!isUnlocked && (
-          <div style={{ padding: '24px 16px', textAlign: 'center' }}>
-            <div style={{ fontSize: '24px', marginBottom: '12px' }}>🔒</div>
-            <div style={{ fontSize: '11px', color: 'var(--text-ghost)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-              Surveillance Encrypted
-            </div>
-            <div style={{ fontSize: '10px', color: 'var(--text-dim)', marginTop: '8px', lineHeight: 1.4 }}>
-              Payment required to unlock real-time asset tracking.
-            </div>
-          </div>
-        )}
-        {isUnlocked && updatedAt && (
+        {updatedAt && (
           <div style={{ fontSize: '10px', color: 'var(--text-ghost)', padding: '4px 16px', marginBottom: '4px' }}>
             Updated {updatedAt}
           </div>
         )}
         <div className="token-list">
-          {isUnlocked && tokens.length === 0 && (
+          {tokens.length === 0 && (
             <div style={{ padding: '20px 16px', color: 'var(--text-ghost)', fontSize: '11px', textAlign: 'center' }}>
               AUTONOMOUS SURVEILLANCE ACTIVE<br/>
               Awaiting next forensic cycle...
             </div>
           )}
-          {isUnlocked && tokens.map(tok => (
+          {tokens.map(tok => (
             <div
               key={tok.address || tok.symbol}
               className={`token-item ${selected?.symbol === tok.symbol ? 'active' : ''}`}
@@ -353,7 +249,7 @@ const Dashboard = () => {
               <div>
                 <div className="token-name">{tok.symbol}</div>
                 <div className="token-meta" style={{ color: phaseColor(tok.phase), fontSize: '10px' }}>
-                  {tok.phase || tok.chain?.toUpperCase() || 'SODEX'}
+                  {tok.phase || tok.chain?.toUpperCase() || 'CELO'}
                 </div>
               </div>
               <div style={{ textAlign: 'right' }}>
@@ -368,9 +264,9 @@ const Dashboard = () => {
       </aside>
 
       {/* ── Main Content ── */}
-      <main className={`content-area ${!isUnlocked ? 'locked' : ''}`} style={{ position: 'relative' }}>
+      <main className="content-area" style={{ position: 'relative' }}>
         {/* Loading skeleton */}
-        {loadingState === 'loading' && !isUnlocked && (
+        {loadingState === 'loading' && (
           <div className="paywall-overlay">
             <div className="paywall-card">
               <div className="pw-chip">Loading forensic data...</div>
@@ -410,64 +306,18 @@ const Dashboard = () => {
           </div>
         )}
 
-        {!isUnlocked && loadingState !== 'loading' && loadingState !== 'error' && (
-          <div className="paywall-overlay">
-            <div className="paywall-card">
-              <div className="pw-chip">Per-Token Forensic Intelligence · SoSoValue + SoDEX</div>
-              <div className="pw-icon" style={{ fontSize: '32px', marginBottom: '20px' }}>🔐</div>
-              <h2>Intelligence Access</h2>
-              <p>Full forensic depth — 100+ computed metrics, LFI simulation, whale mapping, bull flag detection, and an autonomous Sovereign AI narrative — unlocked with a single on-chain micropayment.</p>
-              <div className="paywall-price">0.1 USDC</div>
-              <div className="paywall-price-sub">SoDEX · 24h Access · Non-Custodial</div>
-              <div className="pw-status" style={{
-                color: status.includes('failed') || status.includes('cancel') ? '#ff4466' : 'var(--text-ghost)',
-                marginBottom: '16px'
-              }}>
-                {status || (wallet ? 'Ready to unlock' : 'Connect wallet to unlock')}
-              </div>
-              <button
-                className="btn-unlock-pw"
-                onClick={handleUnlock}
-                disabled={status.includes('Pending') || status.includes('sent')}
-              >
-                {wallet ? 'Unlock for 0.1 USDC' : 'Connect Wallet'}
-              </button>
-              <button
-                onClick={() => setIsUnlocked(true)}
-                style={{
-                  background: 'transparent',
-                  border: '1px dashed var(--border)',
-                  color: 'var(--text-ghost)',
-                  padding: '8px 12px',
-                  borderRadius: '4px',
-                  cursor: 'pointer',
-                  fontSize: '11px',
-                  marginTop: '12px',
-                  width: '100%',
-                  textAlign: 'center',
-                  transition: 'all 0.2s'
-                }}
-                onMouseOver={(e) => { e.target.style.color = 'var(--text-main)'; e.target.style.borderColor = 'var(--accent)'; }}
-                onMouseOut={(e) => { e.target.style.color = 'var(--text-ghost)'; e.target.style.borderColor = 'var(--border)'; }}
-              >
-                ⚡ Demo Bypass (Akindo Judges Mode)
-              </button>
-            </div>
-          </div>
-        )}
-
         {t && (
           <div>
             {/* Token Header */}
             <div className="intel-header">
               <div>
                 <div className="intel-title">
-                  <h1 style={{ fontSize: '48px', fontWeight: 800 }}>{isUnlocked ? t.symbol : '••••••'}</h1>
+                  <h1 style={{ fontSize: '48px', fontWeight: 800 }}>{t.symbol}</h1>
                 </div>
                 <div className="addr-pill" title={t.address}>
-                  {t.address ? `${t.address.slice(0, 6)}…${t.address.slice(-4)}` : 'SoDEX'}
+                  {t.address ? `${t.address.slice(0, 6)}…${t.address.slice(-4)}` : 'CELO'}
                 </div>
-                {t.bailout_recommended && isUnlocked && (
+                {t.bailout_recommended && (
                   <div style={{ marginTop: '12px' }}>
                     <button 
                       onClick={() => executeBailout(t)} 
@@ -481,23 +331,23 @@ const Dashboard = () => {
               </div>
               <div className="fhs-radar">
                 <div style={{ fontSize: '10px', color: 'var(--text-ghost)', marginBottom: '4px' }}>FHS</div>
-                <div className="fhs-val">{isUnlocked ? fmt(fhsValue, 1) : '—'}</div>
-                <div style={{ fontSize: '10px', color: 'var(--text-ghost)' }}>{isUnlocked ? (t.fhs_label || '') : 'LOCKED'}</div>
+                <div className="fhs-val">{fmt(fhsValue, 1)}</div>
+                <div style={{ fontSize: '10px', color: 'var(--text-ghost)' }}>{t.fhs_label || ''}</div>
               </div>
             </div>
 
             {/* Price row */}
             <div style={{ display: 'flex', gap: '16px', marginBottom: '24px', flexWrap: 'wrap' }}>
               {[
-                ['Price', isUnlocked ? fmtPrice(t.price_usd) : '••••'],
-                ['24h Δ', isUnlocked ? (t.price_change_24h != null ? `${t.price_change_24h > 0 ? '+' : ''}${fmt(t.price_change_24h)}%` : '—') : '••••'],
-                ['Vol 24h', isUnlocked ? fmtK(t.volume_24h) : '••••'],
-                ['Liq', isUnlocked ? fmtK(t.liquidity_usd) : '••••'],
-                ['MCap', isUnlocked ? fmtK(t.mcap) : '••••'],
+                ['Price', fmtPrice(t.price_usd)],
+                ['24h Δ', t.price_change_24h != null ? `${t.price_change_24h > 0 ? '+' : ''}${fmt(t.price_change_24h)}%` : '—'],
+                ['Vol 24h', fmtK(t.volume_24h)],
+                ['Liq', fmtK(t.liquidity_usd)],
+                ['MCap', fmtK(t.mcap)],
               ].map(([label, val]) => (
                 <div key={label} style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: '6px', padding: '10px 14px', minWidth: '90px' }}>
                   <div style={{ fontSize: '10px', color: 'var(--text-ghost)', marginBottom: '4px' }}>{label}</div>
-                  <div className="mono" style={{ fontSize: '13px', color: isUnlocked && label === '24h Δ' && t.price_change_24h < 0 ? '#ff4466' : 'var(--text-main)' }}>{val}</div>
+                  <div className="mono" style={{ fontSize: '13px', color: label === '24h Δ' && t.price_change_24h < 0 ? '#ff4466' : 'var(--text-main)' }}>{val}</div>
                 </div>
               ))}
             </div>
@@ -583,9 +433,9 @@ const Dashboard = () => {
             {/* AI Narrative */}
             <div className="section-header">// Venice AI Assessment</div>
             <div style={{ background: 'var(--surface)', borderLeft: '2px solid var(--accent)', padding: '20px 24px', lineHeight: 1.7, fontSize: '13px', color: 'var(--text-dim)', marginBottom: '24px' }}>
-              <div style={{ marginBottom: '8px' }}>{isUnlocked ? (t.narrative_phase || '—') : 'LOCKED'}</div>
-              <div style={{ marginBottom: '8px' }}>{isUnlocked ? (t.narrative_insight || '—') : 'Unlock full intelligence access to view the autonomous forensic risk assessment.'}</div>
-              <div style={{ color: 'var(--text-ghost)' }}>{isUnlocked ? (t.narrative_structure || '—') : '••••'}</div>
+              <div style={{ marginBottom: '8px' }}>{t.narrative_phase || '—'}</div>
+              <div style={{ marginBottom: '8px' }}>{t.narrative_insight || '—'}</div>
+              <div style={{ color: 'var(--text-ghost)' }}>{t.narrative_structure || '—'}</div>
             </div>
 
             {/* SoSoValue Intelligence Panel */}
@@ -667,16 +517,11 @@ const Dashboard = () => {
       </main>
 
       {/* ── Telemetry ── */}
-      <aside className={`telemetry ${!isUnlocked ? 'locked' : ''}`} style={{ borderLeft: '1px solid var(--border)', background: 'rgba(10,10,12,0.5)', padding: '20px' }}>
+      <aside className="telemetry" style={{ borderLeft: '1px solid var(--border)', background: 'rgba(10,10,12,0.5)', padding: '20px' }}>
         <div className="t-section-title" style={{ color: 'var(--amber)', fontSize: '11px', fontWeight: 800, textTransform: 'uppercase', marginBottom: '15px' }}>
           Autonomous Signal Watch
         </div>
-        {!isUnlocked && (
-          <div style={{ padding: '20px 0', fontSize: '11px', color: 'var(--text-ghost)', textAlign: 'center', borderTop: '1px dashed var(--border)' }}>
-            PAVE PROTOCOL ACTIVE · DATA ENCRYPTED
-          </div>
-        )}
-        {isUnlocked && t?.alerts && t.alerts.length > 0 ? t.alerts.map((a, i) => (
+        {t?.alerts && t.alerts.length > 0 ? t.alerts.map((a, i) => (
           <div key={i} style={{
             padding: '10px',
             background: a.severity === 'critical' ? 'rgba(255,68,102,0.1)' : 'rgba(255,184,0,0.1)',
