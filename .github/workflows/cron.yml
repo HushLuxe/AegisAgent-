@@ -1,0 +1,28 @@
+name: Hourly Forensic Scan
+
+on:
+  schedule:
+    # Run at the start of every hour
+    - cron: '0 * * * *'
+  workflow_dispatch: # Allow manually triggering the workflow
+
+jobs:
+  trigger-forensics:
+    name: Trigger AegisAgent Forensic Pipeline
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Vercel Serverless Function
+        run: |
+          # Use VERCEL_APP_URL secret if defined, otherwise fallback to default URL
+          URL="${{ secrets.VERCEL_APP_URL }}"
+          if [ -z "$URL" ]; then
+            URL="https://aegisagento.vercel.app"
+          fi
+          
+          echo "Triggering hourly forensic scan on AegisAgent..."
+          echo "Target URL: $URL"
+          
+          curl -sS -X GET "$URL/api/forensics?refresh=true" \
+            -H "x-vercel-cron: 1" \
+            -H "Accept: application/json" \
+            --write-out "\nHTTP Status: %{http_code}\nTime: %{time_total}s\n"

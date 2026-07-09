@@ -16,7 +16,7 @@
   "crons": [
     {
       "path": "/api/forensics",
-      "schedule": "0 * * * *"
+      "schedule": "0 0 * * *"
     }
   ],
   "installCommand": "cd frontend && npm install",

@@ -6,7 +6,7 @@
 
 AegisAgent is an agentic finance application that combines SoSoValue's on-chain data infrastructure with proprietary forensic analysis to deliver institutional-grade crypto intelligence.
 
-- **Runs every 60 minutes** via Vercel Cron
+- **Runs every 60 minutes** via GitHub Actions (or Vercel Cron on Pro plan)
 - **Ingests live data** from SoSoValue API across 7 modules (market, news, macro, ETF, treasuries, indices, sectors)
 - **Collects on-chain data** via DexScreener + Moralis
 - **Computes 100+ proprietary metrics** through `ForensicEngineV5` (whale clustering, liquidity fragility, volatility divergence, etc.)
